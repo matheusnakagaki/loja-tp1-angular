@@ -33,7 +33,7 @@ jobs:
         with:
           # Especifica a versão do Node.js a ser usada.
           # Use a versão compatível com o seu projeto Angular (18 é uma boa escolha).
-          node-version: '18'
+          node-version: '20'
 
       # Etapa 3: Instalar as dependências do projeto
       # O comando 'run' executa comandos de linha de comando.
