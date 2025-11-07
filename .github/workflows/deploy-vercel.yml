@@ -65,6 +65,7 @@ jobs:
         # Elas usam os "Secrets" que configuramos no GitHub (Passo 1).
         # Elas dizem à Vercel CLI para qual organização e projeto este deploy se destina.
         env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       
