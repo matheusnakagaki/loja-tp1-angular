@@ -1,72 +1,50 @@
-# Define o nome do workflow. Este nome aparecerá na aba "Actions" do GitHub.
+# nome do workflow
 name: Deploy do Angular para Vercel
 
-# Configura o "gatilho" (trigger) que inicia o workflow.
+# gatilho
 on:
-  # O workflow será executado em todo 'push' (envio de código).
   push:
-    # Especifica para qual branch o 'push' deve ser feito para disparar o workflow.
-    # Altere 'main' se a sua branch principal tiver outro nome (ex: 'master').
     branches:
       - main
 
-# Define os "trabalhos" (jobs) que o workflow executará.
+# jobs
 jobs:
-  # Define um único trabalho chamado 'build-and-deploy'.
+  # nome do job
   build-and-deploy:
-    # Especifica o tipo de "máquina virtual" (runner) que executará o trabalho.
-    # 'ubuntu-latest' é a versão mais recente do Ubuntu, um ambiente Linux padrão.
+    # máquina virtual que vai rodar o código
     runs-on: ubuntu-latest
 
-    # 'steps' são as etapas sequenciais que o trabalho executará.
+    # passos que o job vai executar
     steps:
-      # Etapa 1: Baixar o código do repositório
-      # A 'action' (ação) 'actions/checkout@v3' é uma ação pronta do GitHub
-      # que baixa o código da sua branch para a máquina virtual.
+      # usa a action 'checkout' para ter os arquivos do projeto na máquina
       - name: Checkout código
         uses: actions/checkout@v3
 
-      # Etapa 2: Configurar o ambiente Node.js
-      # A 'action' 'actions/setup-node@v3' instala o Node.js na máquina.
+      # instala a versão do node que o projeto precisa
       - name: Configurar Node.js
         uses: actions/setup-node@v3
         with:
-          # Especifica a versão do Node.js a ser usada.
-          # Use a versão compatível com o seu projeto Angular (18 é uma boa escolha).
           node-version: '20'
 
-      # Etapa 3: Instalar as dependências do projeto
-      # O comando 'run' executa comandos de linha de comando.
-      # 'npm install' baixa todos os pacotes listados no 'package.json'.
+      # roda o npm install para baixar os pacotes
       - name: Instalar dependências
         run: npm install
 
-      # Etapa 4: Instalar a Vercel CLI
-      # Instala a Interface de Linha de Comando (CLI) da Vercel globalmente ('-g')
-      # na máquina virtual. É ela quem fará o deploy.
+      # instala a linha de comando da vercel na máquina
       - name: Instalar Vercel CLI
         run: npm install -g vercel
 
-      # Etapa 5: Fazer o build do projeto Angular em modo de produção
-      # Conforme a dica do exercício[cite: 36], este comando compila o projeto.
-      # 'npm run build' executa o script 'build' do 'package.json'.
-      # O '-- --configuration production' passa a flag de produção para o 'ng build',
-      # otimizando os arquivos finais que estarão na pasta '/dist'.
+      # roda o build do package.json em modo de produção
       - name: Build do projeto Angular (Produção)
         run: npm run build -- --configuration production
 
-      # Etpa 6: Fazer o deploy para a produção na Vercel
-      # Este comando publica o projeto na Vercel.
-      # 'vercel --prod' indica que é um deploy de produção (atualiza o site principal).
-      # '--token $VERCEL_TOKEN' usa o token secreto para autenticar.
+      # envia o build para a vercel usando o token de autenticação
       - name: Deploy para Vercel (Produção)
         run: vercel --prod --token $VERCEL_TOKEN
-        # 'env' define variáveis de ambiente para este comando específico.
-        # Elas usam os "Secrets" que configuramos no GitHub (Passo 1).
-        # Elas dizem à Vercel CLI para qual organização e projeto este deploy se destina.
+        # env define as variáveis de ambiente para o run
+        # secrets configurados no github
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       
-      # Nota: Conforme solicitado[cite: 37], a etapa de testes ('npm test') foi omitida.
